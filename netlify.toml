@@ -1,0 +1,12 @@
+# https://vite-pwa-org.netlify.app/deployment/netlify.html
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    cache-control = '''
+    max-age=86400,
+    immutable
+    '''
