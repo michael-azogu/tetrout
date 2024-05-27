@@ -278,6 +278,27 @@ function with_settled(body: Brick[]) {
   })
 }
 
+function range(...args: any): number[] {
+  let start: number, stop: number, step: number
+
+  if (args.length === 1) {
+    start = 0
+    step = 1
+    ;[stop] = args
+  } else {
+    ;[start, stop, step = 1] = args
+  }
+
+  const arr: number[] = []
+  let current = start
+  while (current < stop) {
+    arr.push(current)
+    current += step || 1
+  }
+
+  return arr
+}
+
 document.addEventListener('keydown', (e) => {
   if (e.key == 'ArrowLeft' || e.key == 'ArrowRight') {
     const by = e.key == 'ArrowLeft' ? -brick_size : brick_size
@@ -293,49 +314,37 @@ document.addEventListener('keydown', (e) => {
   }
 
   if (e.key == 'ArrowDown' || e.key == 'ArrowUp') {
-    // let clone = current_tetrimino.map((r) =>
-    //   r.map((p) => ({ ...p, isBody: false }))
-    // )
+    const next = current_tetrimino.map((row) =>
+      row.map((t) => ({ ...t } as Brick))
+    )
 
-    // current_tetrimino = clone
+    const Clockwise = range(0, current_tetrimino[0].length, 1).map((i) =>
+      range(0, current_tetrimino.length, 1)
+        .map((j) => ({ ...current_tetrimino[j][i] }))
+        .reverse()
+    )
 
-    // function rotateMatrix90Clockwise(matrix: Brick[][]) {
-    //   const n = matrix.length
-    //   const rotatedMatrix = Array.from({ length: n }, () => Array(n).fill(0))
-    //   for (let i = 0; i < n; i++) {
-    //     for (let j = 0; j < n; j++) {
-    //       rotatedMatrix[j][n - 1 - i] = matrix[i][j]
-    //     }
-    //   }
-    //   return rotatedMatrix
-    // }
+    const AntiClockwise = range(0, current_tetrimino[0].length, 1)
+      .reverse()
+      .map((i) =>
+        range(0, current_tetrimino.length, 1).map((j) => ({
+          ...current_tetrimino[j][i],
+        }))
+      )
 
-    // clone = rotateMatrix90Clockwise(clone)
-    
-    // const N = current_tetrimino.length
-    // for (let i = 0; i < N; i++) {
-    //   for (let j = i; j < N; j++) {
-    //     let temp = clone[i][j]
-    //     clone[i][j] = clone[j][i]
-    //     clone[j][i] = temp
-    //   }
-    // }
-    // for (let i = 0; i < N; i++) {
-    //   clone[i].reverse()
-    // }
+    const rotation = [Clockwise, AntiClockwise]
+    const rotatedBlock = rotation[e.key == 'ArrowDown' ? 0 : 1]
+    for (let i = 0; i < current_tetrimino.length; i++) {
+      for (let j = 0; j < current_tetrimino[i].length; j++) {
+        next[i][j].isBody = rotatedBlock[i][j].isBody
+      }
+    }
 
-    // for (let i = 0; i < current_tetrimino.length; i++) {
-    //   for (let j = i; j < current_tetrimino.length; j++) {
-    //     current_tetrimino[i][j].isBody = clone[i][j].isBody
-    //   }
-    // }
+    const rotatedBody = get_body(next)
 
-    // if (
-    //   with_settled(current_tetrimino.flat()) ||
-    //   with_wall(current_tetrimino.flat())
-    // ) {
-    //   current_tetrimino = clone
-    // }
+    if (!with_settled(rotatedBody) && !with_wall(rotatedBody)) {
+      current_tetrimino = next
+    }
   }
 })
 

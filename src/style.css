@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: 'Pixelon';
-  src: url('../public/Pixelon.otf') format('opentype');
+  src: url('./Pixelon.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
@@ -35,12 +35,8 @@ canvas {
 }
 
 #score {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 200px;
-  height: 40px;
   color: black;
+  padding: 3px;
   background-color: white;
   font-family: "Pixelon";
 }
