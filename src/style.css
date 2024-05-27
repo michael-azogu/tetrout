@@ -10,6 +10,13 @@
   text-rendering: optimizeLegibility;
 }
 
+@font-face {
+  font-family: 'Pixelon';
+  src: url('../public/Pixelon.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -35,4 +42,5 @@ canvas {
   height: 40px;
   color: black;
   background-color: white;
+  font-family: "Pixelon";
 }
