@@ -8,18 +8,23 @@ const play = (url: string) => new Audio(url).play()
 
 type Brick = { x: number; y: number; color: string; isBody: boolean }
 
+let broken = 0
 let ended = false
+
 let time = 0
 setInterval(() => time++, 1000)
-let broken = 0
+
 const HIGH_SCORE_KEY = 'hiscore'
 let high_score = Number(localStorage.getItem(HIGH_SCORE_KEY) || 0)
 const score_div = document.getElementById('score')!
 
 const brick_size = 20
 
-setTimeout(() => play(theme), 2000)
-setInterval(() => play(theme), 40e3)
+setTimeout(() => {
+  play(theme)
+  setInterval(() => play(theme), 40e3)
+}, 2000)
+
 const well = document.createElement('canvas')
 well.width = brick_size * 9
 well.height = brick_size * 16
@@ -38,7 +43,6 @@ function paint_bg() {
     ctx.fillStyle = '#333'
     ctx.rect(0, 0, well.width, well.height)
     ctx.fill()
-
     ctx.strokeStyle = '#777'
     ctx.lineWidth = 1
     for (let x = 0; x <= well.width; x += brick_size) {
@@ -116,7 +120,7 @@ const tetriminos: Brick[][][] = [
       x: (3 + x) * brick_size,
       y: (-3 + y) * brick_size,
       color: data.color,
-      isBody: cell > 0,
+      isBody: cell == 1,
     }))
   )
 )
@@ -234,10 +238,10 @@ let balltick = setInterval(() => {
     ball.update()
   })
   paint_balls()
-}, 5)
+}, 6)
 
-let tick = setInterval(() => {
-  if (ended) clearInterval(tick)
+let tick_down = setInterval(() => {
+  if (ended) clearInterval(tick_down)
 
   const next = current_tetrimino.map((row) =>
     row.map((t) => ({ ...t, y: t.y + brick_size }))
@@ -278,6 +282,7 @@ function with_settled(body: Brick[]) {
   })
 }
 
+// copied from github.com/antfu/utils/blob/main/src/array.ts#L138
 function range(...args: any): number[] {
   let start: number, stop: number, step: number
 
@@ -295,7 +300,6 @@ function range(...args: any): number[] {
     arr.push(current)
     current += step || 1
   }
-
   return arr
 }
 

@@ -35,6 +35,7 @@ canvas {
 }
 
 #score {
+  position: absolute;
   color: black;
   padding: 3px;
   background-color: white;
